@@ -15,7 +15,7 @@ rule csv_to_excel:
     output:
         "summary.xlsx"
     script:
-        "csv_to_excel.py"
+        "scripts/csv_to_excel.py"
 
 
 rule quast_report_common:
@@ -38,7 +38,7 @@ rule busco_txts_to_csv:
         lineage="bacteria",
         id=IDS,
     script:
-        "txt_to_csv.py"
+        "scripts/txt_to_csv.py"
 
 
 rule run_busco:
