@@ -17,7 +17,7 @@ def get_rates(s: str) -> list:
 
 
 def write_to_csv(rates: list):
-    head = ['C', 'S', 'D', 'F', 'M', 'n']
+    head = ["name", 'Complete', 'Single', 'Duplicated', 'Fragmented', 'Missing', 'Total']
     df=pd.DataFrame(rates,columns=head)
     df.to_csv(snakemake.output[0], index=None)
 
@@ -36,7 +36,7 @@ def run():
                     # regex needed line
                     if bool(re.search(search_pattern, line_s)):
                         # get percentages from needed line
-                        rates = get_rates(line_s)
+                        rates = [os.path.basename(inp)]+ get_rates(line_s)
                         rates_matrix.append(rates)
                         break
  

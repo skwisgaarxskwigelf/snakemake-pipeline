@@ -1,6 +1,7 @@
-GENOME_PATH = "/mnt/tank/scratch/azamyatin/SPONGES/MAGS/MAGseqs"
-#IDS = glob_wildcards(GENOME_PATH + "/SAP2.{id}.fasta").id
-IDS = ['001', '002', '003']
+configfile: "config.yaml"
+
+GENOME_PATH = config["path"] 
+IDS = glob_wildcards(GENOME_PATH + "/{id}.fasta").id
 
 
 rule all:
@@ -14,6 +15,9 @@ rule csv_to_excel:
         "out/common/report.tsv"
     output:
         "out/summary.xlsx"
+    params:
+        busco_out="out/common/busco_summary.csv",
+        quast_out="out/common/report.tsv"
     script:
         "scripts/csv_to_excel.py"
 
@@ -43,7 +47,7 @@ rule busco_txts_to_csv:
 
 rule run_busco:
     input:
-        GENOME_PATH + "/SAP2.{id}.fasta"
+        GENOME_PATH + "/{id}.fasta"
     output:
         directory("out/busco_results/{id}")
     log:
@@ -58,7 +62,7 @@ rule run_busco:
 
 rule run_quast:
     input:
-        expand("{gp}/SAP2.{id}.fasta", gp=GENOME_PATH, id=IDS)
+        expand("{gp}/{id}.fasta", gp=GENOME_PATH, id=IDS)
     output: 
         directory("out/quast_results")
     shell:
