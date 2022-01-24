@@ -10,7 +10,7 @@ rule all:
 
 rule csv_to_excel:
     input: 
-#        "common/busco_summary.csv",
+        "common/busco_summary.csv",
         "common/report.tsv"
     output:
         "summary.xlsx"
@@ -34,6 +34,9 @@ rule busco_txts_to_csv:
         expand("busco_results/{id}", id=IDS)
     output:
         "common/busco_summary.csv"
+    params:
+        lineage="bacteria",
+        id=IDS,
     script:
         "txt_to_csv.py"
 

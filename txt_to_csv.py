@@ -18,9 +18,7 @@ def get_rates(s: str) -> list:
 
 def write_to_csv(rates: list):
     head = ['C', 'S', 'D', 'F', 'M', 'n']
-    # create df
     df=pd.DataFrame(rates,columns=head)
-    # write to csv
     df.to_csv(snakemake.output[0], index=None)
 
 
@@ -28,13 +26,12 @@ def run():
     rates_matrix = []
     search_pattern = 'C.*S.*D.*F.*M.*n'
 
-    # go thru inputs
     for inp in snakemake.input:
         for f in os.listdir(inp):
-            if f.endswith(".txt"):
-                f = os.path.join(inp, f)
+            if re.match('short_summary.specific.'+ snakemake.params.lineage + '.*.txt', f):
+                full_path = os.path.join(inp, f)
                 # go thru .txt file lines
-                for line in open(f, 'r'):
+                for line in open(full_path, 'r'):
                     line_s = line.strip()
                     # regex needed line
                     if bool(re.search(search_pattern, line_s)):
@@ -45,7 +42,6 @@ def run():
  
     if len(rates_matrix):
         write_to_csv(rates_matrix)
- #   open('busco_results/summary.csv', 'w+')
 
 
 if __name__ == '__main__':
