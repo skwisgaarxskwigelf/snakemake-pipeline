@@ -1,6 +1,7 @@
 configfile: "config.yaml"
 
 GENOME_PATH = config["path"] 
+quast_path = config["quast_path"]
 IDS = glob_wildcards(GENOME_PATH + "/{id}.fasta").id
 
 
@@ -65,11 +66,13 @@ rule run_quast:
         expand("{gp}/{id}.fasta", gp=GENOME_PATH, id=IDS)
     output: 
         directory("out/quast_results")
+    params:
+        path=quast_path
     shell:
         """
         bash -c '
             . $HOME/.bashrc
-            conda activate $HOME/miniconda3/envs/quastenv
+            conda activate {params.path}
             quast {input} -o {output}
             conda deactivate'
         """
