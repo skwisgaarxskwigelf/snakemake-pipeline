@@ -2,6 +2,7 @@ configfile: "config.yaml"
 
 GENOME_PATH = config["path"] 
 quast_path = config["quast_path"]
+busco_path = config["busco_path"]
 IDS = glob_wildcards(GENOME_PATH + "/{id}.fasta").id
 
 
@@ -51,14 +52,21 @@ rule run_busco:
         GENOME_PATH + "/{id}.fasta"
     output:
         directory("out/busco_results/{id}")
-    log:
-        "out/busco_logs/{id}.log"
     params:
         mode="genome",
         lineage="bacteria",
-        download_path="out/busco_downloads"
-    wrapper:
-        "0.84.0/bio/busco"
+        download_path="out/busco_downloads",
+        path=busco_path,
+        out_path="out/busco_results/",
+        out_file="{id}"
+    shell:
+        """
+        bash -c '
+            . $HOME/.bashrc
+            conda activate {params.path}
+            busco -i {input} -l {params.lineage} -m genome --out_path {params.out_path} -o {params.out_file}
+            conda deactivate'
+        """
 
 
 rule run_quast:
